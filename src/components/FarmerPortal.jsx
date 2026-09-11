@@ -14,8 +14,7 @@ import {
   ShieldCheck, 
   Building, 
   Check,
-  Download,
-  Printer
+  Download
 } from 'lucide-react';
 import { translations } from '../data/i18n';
 import { mspRates } from '../data/mockData';
@@ -29,13 +28,14 @@ export default function FarmerPortal({
   onMarkArrived, 
   onRaiseGrievance,
   lang,
-  toggleUssdModal
+  toggleUssdModal,
+  isMobilePreview
 }) {
   const t = translations[lang] || translations.en;
 
   // Booking Form State
-  const [selectedMandiId, setSelectedMandiId] = useState('mandi-khanna');
-  const [selectedCrop, setSelectedCrop] = useState('wheat');
+  const [selectedMandiId, setSelectedMandiId] = useState('mandi-nashik');
+  const [selectedCrop, setSelectedCrop] = useState('soybean');
   const [expectedQty, setExpectedQty] = useState(120);
   const [bookingDate, setBookingDate] = useState('2026-09-06');
   const [timeSlot, setTimeSlot] = useState('10:00 AM - 11:30 AM');
@@ -51,7 +51,7 @@ export default function FarmerPortal({
   // Calculate capacity percentage
   const capPercent = Math.round((selectedMandi.bookedQuintals / selectedMandi.dailyCapacityQuintals) * 100);
   const isOverbooked = capPercent > 85;
-  const alternateMandi = mandis.find(m => m.id === 'mandi-samrala') || mandis[1];
+  const alternateMandi = mandis.find(m => m.id === 'mandi-pimpalgaon') || mandis[1];
 
   const handleBookingSubmit = (e) => {
     e.preventDefault();
@@ -79,14 +79,14 @@ export default function FarmerPortal({
 
   // Pipeline step definitions
   const pipelineSteps = [
-    { key: 1, title: t.step1, desc: "Aadhaar & Land Linked" },
-    { key: 2, title: t.step2, desc: activeBooking?.bookingDate || "Date Reserved" },
-    { key: 3, title: t.step3, desc: activeBooking?.gateArrived ? "Verified at Gate" : "Pending Arrival" },
-    { key: 4, title: t.step4, desc: activeBooking?.qualityData ? "Grade A Approved" : "Moisture Check" },
-    { key: 5, title: t.step5, desc: activeBooking?.weighmentData ? `${activeBooking.weighmentData.netQuintals} Quintals` : "Gross & Tare Weight" },
-    { key: 6, title: t.step6, desc: activeBooking?.stepIndex >= 6 ? "MSP Bill Created" : "Slip Generated" },
-    { key: 7, title: t.step7, desc: activeBooking?.stepIndex >= 7 ? "DBT Initiated" : "PFMS Transfer" },
-    { key: 8, title: t.step8, desc: activeBooking?.stepIndex >= 8 ? "Fund Credited" : "Bank Settlement" },
+    { key: 1, title: t.step1, desc: `${t.aadhaarVerifiedTitle}` },
+    { key: 2, title: t.step2, desc: activeBooking?.bookingDate || t.preferredDateLabel },
+    { key: 3, title: t.step3, desc: activeBooking?.gateArrived ? t.gateVerifiedBadge : t.markArrivedBtnText },
+    { key: 4, title: t.step4, desc: activeBooking?.qualityData ? t.approvedFullMsp : t.qualityInspectionHeading },
+    { key: 5, title: t.step5, desc: activeBooking?.weighmentData ? `${activeBooking.weighmentData.netQuintals} Quintals` : t.weighbridgeHeading },
+    { key: 6, title: t.step6, desc: activeBooking?.stepIndex >= 6 ? t.calculatedMspBill : t.officialMandiReceiptTitle },
+    { key: 7, title: t.step7, desc: activeBooking?.stepIndex >= 7 ? t.dbtExecutedTitle : t.dbtApprovalTitle },
+    { key: 8, title: t.step8, desc: activeBooking?.stepIndex >= 8 ? t.paidToBankTag : t.dbtAccount },
   ];
 
   const currentStep = activeBooking?.stepIndex || 2;
@@ -98,31 +98,31 @@ export default function FarmerPortal({
       
       {/* Visual Hero Banner with Authentic Aadhaar Identity Photo Card */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200 overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className={`grid grid-cols-1 ${isMobilePreview ? 'grid-cols-1' : 'lg:grid-cols-12'} gap-6 sm:gap-8 items-center`}>
           
           {/* Left Column: Greeting & Status */}
-          <div className="lg:col-span-7 space-y-4">
+          <div className={`${isMobilePreview ? 'col-span-1' : 'lg:col-span-7'} space-y-4`}>
             <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 font-extrabold text-xs px-3 py-1.5 rounded-full border border-emerald-200">
               <UserCheck className="w-4 h-4 text-emerald-700" />
-              <span>Official Government e-KYC Verified Portal</span>
+              <span>{t.eKycBadge}</span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
-              Welcome to AuraFarm, <span className="text-emerald-700">{farmerProfile.farmerName}</span>! 👋
+              {t.welcomeUser} <span className="text-emerald-700">{farmerProfile.farmerName}</span>! 👋
             </h1>
 
             <p className="text-slate-600 text-sm leading-relaxed font-medium">
-              Your Aadhaar identity and land records are pre-verified for instant mandi queue tokens and 100% Direct Benefit Transfer (DBT) bank payouts.
+              {t.aadhaarVerifiedSub}
             </p>
 
             {/* Quick Profile Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <div className={`grid grid-cols-1 ${isMobilePreview ? 'grid-cols-1' : 'sm:grid-cols-2'} gap-3 pt-2`}>
               <div className="bg-emerald-50/80 p-3.5 rounded-2xl border border-emerald-200 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold">
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-[11px] text-emerald-800 font-bold uppercase">Land Record Linked</div>
+                  <div className="text-[11px] text-emerald-800 font-bold uppercase">{t.landRecordLinked}</div>
                   <div className="text-xs font-black text-slate-900">{farmerProfile.landRecordNo}</div>
                 </div>
               </div>
@@ -132,7 +132,7 @@ export default function FarmerPortal({
                   ₹
                 </div>
                 <div>
-                  <div className="text-[11px] text-amber-800 font-bold uppercase">DBT Bank Account</div>
+                  <div className="text-[11px] text-amber-800 font-bold uppercase">{t.dbtAccount}</div>
                   <div className="text-xs font-black text-slate-900">{farmerProfile.bankAccountMasked}</div>
                 </div>
               </div>
@@ -140,7 +140,7 @@ export default function FarmerPortal({
           </div>
 
           {/* Right Column: Authentic Aadhaar Card Farmer Identity Card */}
-          <div className="lg:col-span-5">
+          <div className={`${isMobilePreview ? 'col-span-1' : 'lg:col-span-5'}`}>
             <div className="bg-gradient-to-br from-amber-50/90 via-white to-emerald-50/80 border-2 border-emerald-300 rounded-3xl p-5 shadow-2xl space-y-4">
               
               {/* Aadhaar Card Header */}
@@ -148,12 +148,12 @@ export default function FarmerPortal({
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-emerald-700" />
                   <div>
-                    <div className="text-xs font-black text-slate-900 tracking-wider uppercase">GOVT. OF INDIA • UIDAI E-KYC</div>
-                    <div className="text-[10px] text-slate-500 font-bold">MSP Farmer Digital Identity Card</div>
+                    <div className="text-xs font-black text-slate-900 tracking-wider uppercase">{t.uidaiHeader}</div>
+                    <div className="text-[10px] text-slate-500 font-bold">{t.farmerDigitalId}</div>
                   </div>
                 </div>
                 <span className="bg-emerald-600 text-white font-black text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider">
-                  VERIFIED
+                  {t.verifiedTag}
                 </span>
               </div>
 
@@ -167,26 +167,26 @@ export default function FarmerPortal({
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute bottom-0 inset-x-0 bg-emerald-700 text-white text-[9px] font-black text-center py-0.5 uppercase tracking-wider">
-                    Aadhaar Photo
+                    {t.aadhaarPhotoTag}
                   </div>
                 </div>
 
                 {/* Profile Information */}
                 <div className="space-y-1.5 text-xs flex-1">
                   <div>
-                    <div className="text-[10px] text-slate-400 font-extrabold uppercase">Farmer Name</div>
+                    <div className="text-[10px] text-slate-400 font-extrabold uppercase">{t.farmerNameLabel}</div>
                     <div className="font-black text-slate-900 text-sm leading-tight">{farmerProfile.farmerName}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-slate-400 font-extrabold uppercase">Aadhaar Number</div>
+                    <div className="text-[10px] text-slate-400 font-extrabold uppercase">{t.aadhaarNumberLabel}</div>
                     <div className="font-mono font-black text-emerald-800 text-xs">{farmerProfile.aadhaarMasked}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-slate-400 font-extrabold uppercase">Farmer Registry ID</div>
+                    <div className="text-[10px] text-slate-400 font-extrabold uppercase">{t.farmerRegistryId}</div>
                     <div className="font-mono font-bold text-slate-700 text-[11px]">{farmerProfile.farmerId}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-slate-400 font-extrabold uppercase">Village / District</div>
+                    <div className="text-[10px] text-slate-400 font-extrabold uppercase">{t.villageDistrictLabel}</div>
                     <div className="font-bold text-slate-800 text-[11px]">{farmerProfile.village}</div>
                   </div>
                 </div>
@@ -195,7 +195,7 @@ export default function FarmerPortal({
               {/* Verification Footer */}
               <div className="bg-white border border-emerald-200 p-2.5 rounded-xl text-center text-[11px] font-black text-emerald-800 flex items-center justify-center gap-1.5 shadow-sm">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Biometric & Bank Account Linked for DBT Payments</span>
+                <span>{t.biometricFooter}</span>
               </div>
 
             </div>
@@ -205,10 +205,10 @@ export default function FarmerPortal({
       </div>
 
       {/* Main Experience Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className={`grid grid-cols-1 ${isMobilePreview ? 'grid-cols-1' : 'lg:grid-cols-12'} gap-6 sm:gap-8`}>
         
         {/* Left Column: Slot Booking Wizard */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className={`${isMobilePreview ? 'col-span-1' : 'lg:col-span-7'} space-y-6`}>
           <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200 space-y-6">
             
             {/* Header */}
@@ -219,13 +219,13 @@ export default function FarmerPortal({
                 </div>
                 <div>
                   <h2 className="text-xl font-black text-slate-900">
-                    Book Mandi Slot
+                    {t.bookMandiSlotHeading}
                   </h2>
-                  <p className="text-xs text-slate-500 font-medium">Select crop, mandi, and date window to receive your queue token</p>
+                  <p className="text-xs text-slate-500 font-medium">{t.bookMandiSlotSub}</p>
                 </div>
               </div>
               <span className="bg-emerald-100 text-emerald-800 text-xs font-extrabold px-3 py-1 rounded-full border border-emerald-200">
-                CAPACITY AWARE
+                {t.capacityAwareBadge}
               </span>
             </div>
 
@@ -235,12 +235,12 @@ export default function FarmerPortal({
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <label className="block text-xs font-black text-slate-900 uppercase tracking-wider">
-                    1. Select Harvest Crop (Tap Image to Select)
+                    {t.selectCropStep}
                   </label>
-                  <span className="text-xs text-emerald-700 font-black">Govt MSP 2026 Rates</span>
+                  <span className="text-xs text-emerald-700 font-black">{t.govtMspRates}</span>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                <div className={`grid grid-cols-2 ${isMobilePreview ? 'grid-cols-2' : 'sm:grid-cols-3 lg:grid-cols-5'} gap-2 sm:gap-3`}>
                   {Object.entries(mspRates).map(([key, crop]) => {
                     const isSelected = selectedCrop === key;
                     return (
@@ -278,10 +278,10 @@ export default function FarmerPortal({
               </div>
 
               {/* 2. Quantity Input Card */}
-              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+              <div className={`bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 grid grid-cols-1 ${isMobilePreview ? 'grid-cols-1' : 'sm:grid-cols-2'} gap-4 items-center`}>
                 <div>
                   <label className="block text-xs font-black text-slate-900 uppercase tracking-wider mb-2">
-                    Expected Quantity (Quintals)
+                    {t.expectedQuantityLabel}
                   </label>
                   <div className="relative">
                     <input
@@ -297,18 +297,18 @@ export default function FarmerPortal({
                 </div>
 
                 <div className="bg-white p-4 rounded-xl border border-slate-200 flex flex-col justify-center">
-                  <div className="text-xs text-slate-500 font-bold">Estimated MSP Total Payment:</div>
+                  <div className="text-xs text-slate-500 font-bold">{t.estMspTotal}</div>
                   <div className="text-xl font-black text-emerald-800 font-mono">
-                    ₹{estimatedTotalValue.toLocaleString()}
+                    ₹{estimatedTotalValue.toLocaleString('en-IN')}
                   </div>
-                  <div className="text-[10px] text-emerald-600 font-extrabold mt-0.5">Direct Transfer to HDFC ****4821</div>
+                  <div className="text-[10px] text-emerald-600 font-extrabold mt-0.5">Direct Transfer to Bank Account ****4821</div>
                 </div>
               </div>
 
               {/* 3. Mandi Selector Cards */}
               <div className="space-y-3">
                 <label className="block text-xs font-black text-slate-900 uppercase tracking-wider">
-                  2. Choose Procurement Mandi Hub
+                  {t.chooseProcurementHub}
                 </label>
 
                 <div className="grid grid-cols-1 gap-3">
@@ -335,7 +335,7 @@ export default function FarmerPortal({
                               <span className="text-xs text-slate-500 font-bold">({m.distanceKm} km)</span>
                             </div>
                             <div className="text-xs text-slate-600 font-medium">
-                              {m.district} • Average Wait: <strong className="text-slate-900">{m.avgWaitMins} mins</strong>
+                              {m.district} • {t.avgMandiWaitTime}: <strong className="text-slate-900">{m.avgWaitMins} mins</strong>
                             </div>
                           </div>
 
@@ -347,7 +347,7 @@ export default function FarmerPortal({
                                 ? 'bg-amber-100 text-amber-800 border-amber-200' 
                                 : 'bg-emerald-100 text-emerald-800 border-emerald-200'
                             }`}>
-                              {pct}% Capacity ({m.bookedQuintals}/{m.dailyCapacityQuintals} Q)
+                              {pct}% {t.capacityLabel} ({m.bookedQuintals}/{m.dailyCapacityQuintals} Q)
                             </span>
                           </div>
                         </div>
@@ -364,10 +364,10 @@ export default function FarmerPortal({
                     <AlertTriangle className="w-6 h-6 text-amber-600 shrink-0 mt-0.5" />
                     <div>
                       <h3 className="text-xs font-black text-amber-900 uppercase tracking-wide">
-                        Mandatory Load Balancing Alert - {selectedMandi.name}
+                        {t.loadBalancerAlertTitle} - {selectedMandi.name}
                       </h3>
                       <p className="text-xs text-amber-800 mt-1 leading-relaxed">
-                        {selectedMandi.name} is currently at <strong>{capPercent}% capacity</strong>. Wait time may exceed 3.5 hours due to tractor queue congestion.
+                        {selectedMandi.name} is currently at <strong>{capPercent}% capacity</strong>.
                       </p>
                     </div>
                   </div>
@@ -376,10 +376,10 @@ export default function FarmerPortal({
                     <div className="flex items-center justify-between text-xs font-extrabold text-emerald-800">
                       <span className="flex items-center gap-1.5">
                         <Compass className="w-4 h-4 text-emerald-600" />
-                        Recommended Alternate Procurement Center:
+                        {t.recommendedAlternateHub}
                       </span>
                       <span className="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full text-[10px] font-black">
-                        RECOMMENDED
+                        {t.recommendedTag}
                       </span>
                     </div>
                     <div className="text-sm font-black text-slate-900">{alternateMandi.name}</div>
@@ -391,7 +391,7 @@ export default function FarmerPortal({
                       onClick={() => setSelectedMandiId(alternateMandi.id)}
                       className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md"
                     >
-                      <span>Switch to {alternateMandi.name} (1-Click)</span>
+                      <span>{t.switchHubBtn} {alternateMandi.name}</span>
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
@@ -399,10 +399,10 @@ export default function FarmerPortal({
               )}
 
               {/* 4. Date & Time Selection */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className={`grid grid-cols-1 ${isMobilePreview ? 'grid-cols-1' : 'sm:grid-cols-2'} gap-4`}>
                 <div>
                   <label className="block text-xs font-black text-slate-900 uppercase tracking-wider mb-2">
-                    Preferred Date
+                    {t.preferredDateLabel}
                   </label>
                   <input
                     type="date"
@@ -414,7 +414,7 @@ export default function FarmerPortal({
 
                 <div>
                   <label className="block text-xs font-black text-slate-900 uppercase tracking-wider mb-2">
-                    Time Window
+                    {t.timeWindowLabel}
                   </label>
                   <select
                     value={timeSlot}
@@ -435,14 +435,14 @@ export default function FarmerPortal({
                 className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-base py-4 rounded-2xl transition shadow-xl shadow-emerald-600/30 flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01]"
               >
                 <Sparkles className="w-5 h-5 text-amber-300" />
-                <span>Confirm Slot & Issue Digital Token Pass</span>
+                <span>{t.confirmSlotBtn}</span>
               </button>
             </form>
           </div>
         </div>
 
-        {/* Right Column: Boarding Pass Style Digital Token Ticket */}
-        <div className="lg:col-span-5 space-y-6">
+        {/* Right Column: Live Queue Status Ticket */}
+        <div className={`${isMobilePreview ? 'col-span-1' : 'lg:col-span-5'} space-y-6`}>
           
           {/* Digital Token Ticket */}
           <div className="ticket-card p-6 space-y-5">
@@ -452,7 +452,7 @@ export default function FarmerPortal({
             <div className="flex justify-between items-start border-b border-emerald-200 pb-4">
               <div>
                 <span className="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                  OFFICIAL MANDI PASS
+                  {t.officialMandiPass}
                 </span>
                 <h2 className="text-lg font-black text-slate-900 mt-2">
                   {activeBooking?.mandiName || selectedMandi.name}
@@ -469,7 +469,7 @@ export default function FarmerPortal({
             {/* Token ID Banner */}
             <div className="bg-gradient-to-r from-emerald-50 to-emerald-100/80 border-2 border-emerald-300 p-5 rounded-2xl text-center space-y-1 shadow-inner">
               <div className="text-xs text-emerald-900 font-black uppercase tracking-widest">
-                Digital Queue Token Ticket
+                {t.digitalTokenTicket}
               </div>
               <div className="text-3xl font-black text-emerald-800 font-mono tracking-wider">
                 {activeBooking?.tokenId || "WHEAT-2026-A45"}
@@ -479,16 +479,16 @@ export default function FarmerPortal({
             {/* Live Queue Counters */}
             <div className="grid grid-cols-2 gap-3 text-xs">
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-1">
-                <span className="text-slate-500 font-bold text-[11px]">Currently Serving:</span>
+                <span className="text-slate-500 font-bold text-[11px]">{t.currentlyServingLabel}</span>
                 <div className="font-mono font-black text-amber-700 text-base">
                   {activeBooking?.currentServingToken || "WHEAT-2026-A33"}
                 </div>
               </div>
 
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-1">
-                <span className="text-slate-500 font-bold text-[11px]">Your Position:</span>
+                <span className="text-slate-500 font-bold text-[11px]">{t.yourPositionLabel}</span>
                 <div className="font-mono font-black text-emerald-800 text-base">
-                  #{activeBooking?.queuePosition || 12} in line (~{activeBooking?.estimatedWaitMins || 36} mins)
+                  #{activeBooking?.queuePosition || 12} {t.inLine} (~{activeBooking?.estimatedWaitMins || 36} mins)
                 </div>
               </div>
             </div>
@@ -501,12 +501,12 @@ export default function FarmerPortal({
                   className="w-full bg-amber-500 hover:bg-amber-600 text-white font-black text-sm py-3.5 rounded-xl transition shadow-lg flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Truck className="w-5 h-5" />
-                  <span>Mark I Have Arrived at Mandi Gate</span>
+                  <span>{t.markArrivedBtnText}</span>
                 </button>
               ) : (
                 <div className="p-4 bg-emerald-100 border-2 border-emerald-300 text-emerald-900 rounded-xl text-center font-extrabold text-xs flex items-center justify-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-emerald-700" />
-                  <span>Gate Arrival Verified! Proceed to Bay 3</span>
+                  <span>{t.gateVerifiedBadge}</span>
                 </div>
               )}
             </div>
@@ -517,13 +517,13 @@ export default function FarmerPortal({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                <h3 className="text-xs font-black uppercase tracking-wider text-white">Official Mandi Receipt</h3>
+                <h3 className="text-xs font-black uppercase tracking-wider text-white">{t.officialMandiReceiptTitle}</h3>
               </div>
-              <span className="bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full">PDF READY</span>
+              <span className="bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full">{t.pdfReadyBadge}</span>
             </div>
 
             <p className="text-xs text-emerald-100 font-medium">
-              Download your official Government MSP Procurement & DBT Bank Receipt directly onto your smartphone.
+              {t.downloadPdfSub}
             </p>
 
             <button
@@ -531,19 +531,19 @@ export default function FarmerPortal({
               className="w-full bg-white hover:bg-emerald-50 text-emerald-900 font-black text-xs py-3 rounded-xl transition shadow-lg flex items-center justify-center gap-2 cursor-pointer"
             >
               <Download className="w-4 h-4 text-emerald-700" />
-              <span>Download Procurement Receipt (PDF)</span>
+              <span>{t.downloadPdfReceiptBtn}</span>
             </button>
           </div>
 
           {/* Grievance Desk Trigger */}
           <div className="bg-white p-4 rounded-2xl border border-slate-200 flex justify-between items-center text-xs">
-            <span className="text-slate-600 font-bold">Payment delay or Mandi issue?</span>
+            <span className="text-slate-600 font-bold">{t.reportIssuePrompt}</span>
             <button
               onClick={() => setShowGrievanceModal(true)}
               className="text-amber-700 font-black hover:underline flex items-center gap-1"
             >
               <ShieldAlert className="w-4 h-4 text-amber-600" />
-              <span>Report Issue</span>
+              <span>{t.reportIssueBtn}</span>
             </button>
           </div>
         </div>
@@ -555,12 +555,12 @@ export default function FarmerPortal({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
           <div>
             <h2 className="text-xl font-black text-slate-900">
-              Procurement & Direct Benefit Transfer (DBT) Status Bar
+              {t.procurementDbtStatusBar}
             </h2>
-            <p className="text-xs text-slate-500 font-medium">Track your produce through quality checks, weighbridge, and DBT payment transfer</p>
+            <p className="text-xs text-slate-500 font-medium">{t.procurementDbtSub}</p>
           </div>
           <span className="bg-amber-100 text-amber-800 font-black text-xs px-3 py-1 rounded-full border border-amber-200">
-            Step {currentStep} of 8: {pipelineSteps[currentStep - 1]?.title}
+            {t.stepProgress} {currentStep} {t.of8} {pipelineSteps[currentStep - 1]?.title}
           </span>
         </div>
 
@@ -592,66 +592,66 @@ export default function FarmerPortal({
         </div>
 
         {/* Details Breakdown Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs pt-2">
+        <div className={`grid grid-cols-1 ${isMobilePreview ? 'grid-cols-1' : 'md:grid-cols-3'} gap-4 text-xs pt-2`}>
           
           {/* Card 1: Quality Check */}
           <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-2">
             <div className="flex justify-between items-center">
-              <span className="font-black text-slate-900 text-sm">Quality & Moisture</span>
-              {activeBooking?.qualityData ? <span className="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold">Grade A</span> : <span className="bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full font-bold">Pending</span>}
+              <span className="font-black text-slate-900 text-sm">{t.qualityMoistureHeading}</span>
+              {activeBooking?.qualityData ? <span className="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold">Grade A</span> : <span className="bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full font-bold">{t.processingTag}</span>}
             </div>
             {activeBooking?.qualityData ? (
               <div className="space-y-1 text-slate-600 font-medium">
-                <div>Moisture: <strong className="text-slate-900">{activeBooking.qualityData.moisturePercent}%</strong> (Max 14%)</div>
-                <div>Impurity: <strong className="text-slate-900">{activeBooking.qualityData.foreignMatterPercent}%</strong></div>
-                <div className="text-emerald-700 font-bold text-xs pt-1">✓ Approved Full MSP Rate</div>
+                <div>{t.moistureLabel} <strong className="text-slate-900">{activeBooking.qualityData.moisturePercent}%</strong> (Max 14%)</div>
+                <div>{t.impurityLabel} <strong className="text-slate-900">{activeBooking.qualityData.foreignMatterPercent}%</strong></div>
+                <div className="text-emerald-700 font-bold text-xs pt-1">{t.approvedFullMsp}</div>
               </div>
             ) : (
-              <div className="text-slate-400 italic">Pending inspection at Mandi Bay 3.</div>
+              <div className="text-slate-400 italic">{t.pendingInspectionDesc}</div>
             )}
           </div>
 
           {/* Card 2: Weighbridge */}
           <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-2">
             <div className="flex justify-between items-center">
-              <span className="font-black text-slate-900 text-sm">Verified Weighment</span>
-              {activeBooking?.weighmentData ? <span className="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-mono font-bold">{activeBooking.weighmentData.netQuintals} Quintals</span> : <span className="bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full font-bold">Pending</span>}
+              <span className="font-black text-slate-900 text-sm">{t.verifiedWeighmentHeading}</span>
+              {activeBooking?.weighmentData ? <span className="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-mono font-bold">{activeBooking.weighmentData.netQuintals} Quintals</span> : <span className="bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full font-bold">{t.processingTag}</span>}
             </div>
             {activeBooking?.weighmentData ? (
               <div className="space-y-1 text-slate-600 font-medium">
-                <div>Gross: <strong className="text-slate-900">{activeBooking.weighmentData.grossKg.toLocaleString()} kg</strong></div>
-                <div>Tare: <strong className="text-slate-900">{activeBooking.weighmentData.tareKg.toLocaleString()} kg</strong></div>
-                <div>Net: <strong className="text-emerald-800 font-bold">{activeBooking.weighmentData.netKg.toLocaleString()} kg</strong></div>
+                <div>{t.grossLabel} <strong className="text-slate-900">{activeBooking.weighmentData.grossKg.toLocaleString()} kg</strong></div>
+                <div>{t.tareLabel} <strong className="text-slate-900">{activeBooking.weighmentData.tareKg.toLocaleString()} kg</strong></div>
+                <div>{t.netLabel} <strong className="text-emerald-800 font-bold">{activeBooking.weighmentData.netKg.toLocaleString()} kg</strong></div>
               </div>
             ) : (
-              <div className="text-slate-400 italic">Awaiting electronic weighbridge measurement.</div>
+              <div className="text-slate-400 italic">{t.qualityWeighbridgeSub}</div>
             )}
           </div>
 
           {/* Card 3: Payment */}
           <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-2">
             <div className="flex justify-between items-center">
-              <span className="font-black text-slate-900 text-sm">DBT Bank Transfer</span>
-              {currentStep >= 8 ? <span className="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold">✓ Paid to Bank</span> : currentStep >= 7 ? <span className="bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full font-bold">Processing</span> : <span className="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold">Calculated</span>}
+              <span className="font-black text-slate-900 text-sm">{t.dbtBankTransferHeading}</span>
+              {currentStep >= 8 ? <span className="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold">{t.paidToBankTag}</span> : currentStep >= 7 ? <span className="bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full font-bold">{t.processingTag}</span> : <span className="bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold">{t.calculatedTag}</span>}
             </div>
             <div className="text-2xl font-black text-emerald-800 font-mono">
-              ₹{((activeBooking?.weighmentData?.netQuintals || expectedQty) * currentMspRate).toLocaleString()}
+              ₹{((activeBooking?.weighmentData?.netQuintals || expectedQty) * currentMspRate).toLocaleString('en-IN')}
             </div>
             {currentStep >= 7 ? (
               <div className="text-xs text-slate-600 font-medium space-y-2">
                 <div>Ref: <strong className="font-mono text-slate-900">{activeBooking?.mspDetails?.paymentRef}</strong></div>
-                <div className="text-emerald-700 font-bold">Transferred via Direct Benefit Transfer</div>
+                <div className="text-emerald-700 font-bold">{t.transferredViaDbt}</div>
                 
                 <button
                   onClick={() => downloadProcurementPdfReceipt(activeBooking, farmerProfile)}
                   className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] py-2 rounded-xl flex items-center justify-center gap-1.5 transition shadow-sm"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Download Official Receipt (PDF)</span>
+                  <span>{t.downloadPdfReceiptBtn}</span>
                 </button>
               </div>
             ) : (
-              <div className="text-xs text-slate-500 font-medium">Rate: ₹{currentMspRate}/Quintal • Auto credited to HDFC bank account.</div>
+              <div className="text-xs text-slate-500 font-medium">Rate: ₹{currentMspRate}/Quintal • {t.aadhaarVerifiedDesc}</div>
             )}
           </div>
 
@@ -665,7 +665,7 @@ export default function FarmerPortal({
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2 text-amber-700 font-black text-sm">
                 <ShieldAlert className="w-5 h-5 text-amber-600" />
-                <span>Report Payment or Mandi Issue</span>
+                <span>{t.reportIssueTitle}</span>
               </div>
               <button onClick={() => setShowGrievanceModal(false)} className="text-slate-400 font-bold">✕</button>
             </div>
@@ -673,7 +673,7 @@ export default function FarmerPortal({
             {grievanceSubmitted ? (
               <div className="p-6 bg-emerald-50 border border-emerald-200 rounded-2xl text-center space-y-2">
                 <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
-                <h4 className="font-black text-emerald-900 text-sm">Grievance Registered!</h4>
+                <h4 className="font-black text-emerald-900 text-sm">{t.grievanceRegisteredTitle}</h4>
                 <p className="text-xs text-emerald-800 font-medium">{t.grievanceSuccess}</p>
               </div>
             ) : (
@@ -683,18 +683,18 @@ export default function FarmerPortal({
                 </p>
 
                 <div>
-                  <label className="block font-black text-slate-900 uppercase tracking-wider mb-1">Farmer & Token ID</label>
+                  <label className="block font-black text-slate-900 uppercase tracking-wider mb-1">{t.farmerTokenIdLabel}</label>
                   <input type="text" disabled value={`${farmerProfile.farmerId} | Token: ${activeBooking?.tokenId}`} className="w-full bg-slate-100 border border-slate-300 rounded-xl p-3 text-slate-800 font-black" />
                 </div>
 
                 <div>
-                  <label className="block font-black text-slate-900 uppercase tracking-wider mb-1">Describe Issue</label>
-                  <textarea rows="3" required value={grievanceText} onChange={(e) => setGrievanceText(e.target.value)} placeholder="Describe payment delay or mandi token query..." className="w-full bg-slate-50 border-2 border-slate-300 rounded-xl p-3 text-slate-800 outline-none focus:border-amber-500" />
+                  <label className="block font-black text-slate-900 uppercase tracking-wider mb-1">{t.describeIssueLabel}</label>
+                  <textarea rows="3" required value={grievanceText} onChange={(e) => setGrievanceText(e.target.value)} placeholder={t.grievanceDesc} className="w-full bg-slate-50 border-2 border-slate-300 rounded-xl p-3 text-slate-800 outline-none focus:border-amber-500" />
                 </div>
 
                 <div className="flex gap-2 justify-end pt-2">
-                  <button type="button" onClick={() => setShowGrievanceModal(false)} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl font-bold">Cancel</button>
-                  <button type="submit" className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-black">Submit Grievance</button>
+                  <button type="button" onClick={() => setShowGrievanceModal(false)} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl font-bold">{t.cancelBtn}</button>
+                  <button type="submit" className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-black">{t.submitGrievanceBtn}</button>
                 </div>
               </form>
             )}

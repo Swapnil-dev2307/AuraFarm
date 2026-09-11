@@ -66,22 +66,22 @@ export function downloadProcurementPdfReceipt(booking, farmerProfile) {
   doc.setFont('helvetica', 'bold');
   doc.text(`Procurement Mandi:`, 18, 106);
   doc.setFont('helvetica', 'normal');
-  doc.text(`${booking.mandiName || 'Khanna Main Grain Mandi'}`, 60, 106);
+  doc.text(`${booking.mandiName || 'Nashik APMC Main Mandi'}`, 60, 106);
 
   doc.setFont('helvetica', 'bold');
   doc.text(`Harvest Crop:`, 18, 114);
   doc.setFont('helvetica', 'normal');
-  doc.text(`${booking.cropLabel || 'Wheat (Rabi 2026)'}`, 60, 114);
+  doc.text(`${booking.cropLabel || 'Soybean (Kharif 2026)'}`, 60, 114);
 
   doc.setFont('helvetica', 'bold');
   doc.text(`Quality Moisture %:`, 18, 122);
   doc.setFont('helvetica', 'normal');
-  doc.text(`${booking.qualityData?.moisturePercent || 12.5}% (Grade A Approved)`, 60, 122);
+  doc.text(`${booking.qualityData?.moisturePercent || 11.2}% (Grade A Approved)`, 60, 122);
 
   doc.setFont('helvetica', 'bold');
   doc.text(`Foreign Impurity %:`, 18, 130);
   doc.setFont('helvetica', 'normal');
-  doc.text(`${booking.qualityData?.foreignMatterPercent || 0.8}%`, 60, 130);
+  doc.text(`${booking.qualityData?.foreignMatterPercent || 0.6}%`, 60, 130);
 
   // Section 3: Electronic Weighbridge Breakdown
   doc.setFont('helvetica', 'bold');
@@ -124,7 +124,7 @@ export function downloadProcurementPdfReceipt(booking, farmerProfile) {
   doc.rect(14, 182, 182, 28, 'F');
   doc.rect(14, 182, 182, 28, 'S');
 
-  const rate = booking.mspDetails?.ratePerQuintal || 2275;
+  const rate = booking.mspDetails?.ratePerQuintal || 4892;
   const total = booking.mspDetails?.totalPaymentRs || (netQ * rate);
 
   doc.setTextColor(180, 83, 9); // Amber
@@ -139,21 +139,21 @@ export function downloadProcurementPdfReceipt(booking, farmerProfile) {
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(...darkSlate);
-  doc.text(`DBT Reference No: ${booking.mspDetails?.paymentRef || 'DBT-2026-FCI-9941029'}`, 18, 205);
-  doc.text(`Bank Credited: HDFC Bank ending in 4821 (PFMS Status: APPROVED & SETTLED)`, 18, 210);
+  doc.text(`DBT Reference No: ${booking.mspDetails?.paymentRef || 'DBT-2026-MH-9941029'}`, 18, 205);
+  doc.text(`Bank Credited: Bank of Maharashtra ending in 4821 (MahaDBT Status: APPROVED & SETTLED)`, 18, 210);
 
   // Signatures & Official Stamp
   doc.line(14, 222, 196, 222);
 
   doc.setFontSize(8);
   doc.setFont('helvetica', 'italic');
-  doc.text('This is a computer-generated digital procurement slip under National Food Security Act.', 14, 230);
-  doc.text('Verified by Mandi Procurement Administrator • Food Corporation of India (FCI)', 14, 235);
+  doc.text('This is a computer-generated digital procurement slip under National Food Security Act & Govt. of Maharashtra.', 14, 230);
+  doc.text('Verified by Mandi Procurement Administrator • Dept. of Agriculture & Food, Govt. of Maharashtra & FCI', 14, 235);
 
   doc.setFont('helvetica', 'bold');
   doc.text('OFFICIAL STAMP & DIGITAL SIGNATURE', 140, 230);
-  doc.text('[ APPROVED - GOVT OF INDIA ]', 140, 235);
+  doc.text('[ APPROVED - GOVT OF MAHARASHTRA ]', 140, 235);
 
   // Save PDF
-  doc.save(`AuraFarm_Receipt_${booking.tokenId || 'WHEAT-2026-A45'}.pdf`);
+  doc.save(`KrishiSetu_Receipt_${booking.tokenId || 'SOY-2026-MH45'}.pdf`);
 }

@@ -44,14 +44,14 @@ export function SmsDrawer({ isOpen, onClose, smsLogs, lang }) {
             </p>
             <div className="text-[10px] text-emerald-600 font-bold flex items-center gap-1 pt-0.5 justify-end">
               <CheckCheck className="w-3.5 h-3.5" />
-              <span>Delivered via Indian SMS Gateway</span>
+              <span>{t.deliveredSmsGateway}</span>
             </div>
           </div>
         ))}
       </div>
 
       <div className="p-3 bg-slate-100 border-t border-slate-200 text-center text-[11px] text-slate-500 font-medium">
-        Ensuring 100% accessibility for non-smartphone feature phones via SMS & USSD.
+        {t.featurePhoneFooter}
       </div>
     </div>
   );
@@ -67,33 +67,33 @@ export function UssdModal({ isOpen, onClose, lang }) {
         <div className="flex justify-between items-center border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2 text-emerald-800 font-extrabold text-sm">
             <PhoneCall className="w-4 h-4 text-amber-600" />
-            <span>Feature Phone Offline USSD (*99*456#)</span>
+            <span>{t.ussdModalTitle}</span>
           </div>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 font-bold">✕</button>
         </div>
 
         <div className="bg-slate-900 text-emerald-400 font-mono p-4 rounded-xl space-y-2 text-xs shadow-inner">
           <div className="text-slate-400 text-[10px] font-sans border-b border-slate-800 pb-1">
-            USSD Screen Mock (Dial *99*456#)
+            {t.ussdScreenMock}
           </div>
-          <div>Welcome to AuraFarm MSP Portal:</div>
-          <div>1. Book Mandi Slot</div>
-          <div>2. Check Token Queue Position</div>
-          <div>3. Check DBT Payment Status</div>
-          <div>4. Contact Mandi Administrator</div>
-          <div className="text-amber-300 font-bold pt-2">Enter Option [1-4]: _</div>
+          <div>{t.welcomeUssd}</div>
+          <div>{t.ussdOpt1}</div>
+          <div>{t.ussdOpt2}</div>
+          <div>{t.ussdOpt3}</div>
+          <div>{t.ussdOpt4}</div>
+          <div className="text-amber-300 font-bold pt-2">{t.enterOption}</div>
         </div>
 
         <div className="text-xs text-slate-600 space-y-1">
-          <div className="font-bold text-slate-800">IVR Automated Voice Booking:</div>
-          <div className="text-[11px]">Dial <span className="font-mono font-bold text-emerald-800">1800-180-1551</span> from any basic keypad phone. Select language (Hindi/Punjabi/English) and follow interactive voice prompts.</div>
+          <div className="font-bold text-slate-800">{t.ivrVoiceBookingTitle}</div>
+          <div className="text-[11px]">{t.ivrVoiceBookingDesc}</div>
         </div>
 
         <button
           onClick={onClose}
           className="w-full btn-primary justify-center text-xs"
         >
-          Close USSD Guide
+          {t.closeUssdBtn}
         </button>
       </div>
     </div>

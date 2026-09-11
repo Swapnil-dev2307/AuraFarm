@@ -5,6 +5,7 @@ import FarmerPortal from './components/FarmerPortal';
 import MandiStaffTerminal from './components/MandiStaffTerminal';
 import MinistryAnalytics from './components/MinistryAnalytics';
 import { SmsDrawer, UssdModal } from './components/SmsSimulator';
+import { translations } from './data/i18n';
 import { 
   sampleFarmerProfile, 
   initialMandis, 
@@ -14,8 +15,10 @@ import {
 
 export default function App() {
   const [currentRole, setCurrentRole] = useState('farmer'); // 'farmer' | 'staff' | 'analytics'
-  const [lang, setLang] = useState('en'); // 'en' | 'hi' | 'pb'
+  const [lang, setLang] = useState('en'); // 'en' | 'hi' | 'mr'
   const [isMobilePreview, setIsMobilePreview] = useState(false);
+
+  const t = translations[lang] || translations.en;
 
   // Authentication State (null = show LoginPortal)
   const [authenticatedUser, setAuthenticatedUser] = useState(null);
@@ -59,7 +62,7 @@ export default function App() {
     setAuthenticatedUser(user);
     setCurrentRole('farmer');
     pushSmsNotification(
-      `AuraFarm Security Alert: Aadhaar e-KYC login successful for ${data.farmerName} (${data.aadhaarMasked}). Welcome to AuraFarm Farmer Portal.`
+      `KrishiSetu Security Alert: Aadhaar e-KYC login successful for ${data.farmerName} (${data.aadhaarMasked}). Welcome to KrishiSetu Farmer Portal.`
     );
   };
 
@@ -81,7 +84,7 @@ export default function App() {
 
   // Farmer Action: Book New Slot
   const handleBookSlot = (bookingData) => {
-    const newTokenId = `WHEAT-2026-A${Math.floor(40 + Math.random() * 50)}`;
+    const newTokenId = `SOY-2026-MH${Math.floor(40 + Math.random() * 50)}`;
     const updatedBooking = {
       ...activeBooking,
       tokenId: newTokenId,
@@ -92,7 +95,7 @@ export default function App() {
       expectedQuintals: bookingData.expectedQuintals,
       bookingDate: bookingData.bookingDate,
       timeSlot: bookingData.timeSlot,
-      currentServingToken: "WHEAT-2026-A33",
+      currentServingToken: "SOY-2026-MH33",
       queuePosition: 12,
       estimatedWaitMins: 36,
       gateArrived: false,
@@ -110,7 +113,7 @@ export default function App() {
 
     setActiveBooking(updatedBooking);
     pushSmsNotification(
-      `AuraFarm Alert: Slot confirmed at ${bookingData.mandiName} for ${bookingData.bookingDate} (${bookingData.timeSlot}). Token #${newTokenId}. Bring Aadhaar & land record copy.`
+      `KrishiSetu Alert: Slot confirmed at ${bookingData.mandiName} for ${bookingData.bookingDate} (${bookingData.timeSlot}). Token #${newTokenId}. Bring Aadhaar & land record copy.`
     );
   };
 
@@ -125,14 +128,14 @@ export default function App() {
     }));
 
     pushSmsNotification(
-      `AuraFarm Gate Pass: Arrival verified at ${activeBooking.mandiName} Main Gate. Proceed to Quality Inspection Bay 3 with Token #${activeBooking.tokenId}.`
+      `KrishiSetu Gate Pass: Arrival verified at ${activeBooking.mandiName} Main Gate. Proceed to Quality Inspection Bay 3 with Token #${activeBooking.tokenId}.`
     );
   };
 
   // Staff Action: Call Next Token
   const handleCallNextToken = () => {
     pushSmsNotification(
-      `AuraFarm Announcement: Token #${activeBooking.tokenId} is now called to Weighbridge Bay 1. Please move your tractor forward.`
+      `KrishiSetu Announcement: Token #${activeBooking.tokenId} is now called to Weighbridge Bay 1. Please move your tractor forward.`
     );
   };
 
@@ -161,7 +164,7 @@ export default function App() {
 
     setActiveBooking(updated);
     pushSmsNotification(
-      `AuraFarm Procurement Receipt Generated! Net Weight: ${data.netQuintals} Quintals (${data.grade}, Moisture: ${data.moisturePercent}%). Official MSP Payment calculated: ₹${data.totalPaymentRs.toLocaleString()}.`
+      `KrishiSetu Procurement Receipt Generated! Net Weight: ${data.netQuintals} Quintals (${data.grade}, Moisture: ${data.moisturePercent}%). Official MSP Payment calculated: ₹${data.totalPaymentRs.toLocaleString()}.`
     );
   };
 
@@ -179,7 +182,7 @@ export default function App() {
     }));
 
     pushSmsNotification(
-      `AuraFarm DBT Initiated: Payment of ₹${activeBooking.mspDetails?.totalPaymentRs.toLocaleString() || "2,73,000"} sent to Bank Account ending 4821 via PFMS (Ref: ${refNum}).`
+      `KrishiSetu DBT Initiated: Payment of ₹${activeBooking.mspDetails?.totalPaymentRs.toLocaleString() || "2,73,000"} sent to Bank Account ending 4821 via PFMS (Ref: ${refNum}).`
     );
 
     // Auto complete to step 8 after 3 seconds
@@ -189,7 +192,7 @@ export default function App() {
         stepIndex: 8 // Payment Credited
       }));
       pushSmsNotification(
-        `AuraFarm Bank Alert: ₹${activeBooking.mspDetails?.totalPaymentRs.toLocaleString() || "2,73,000"} has been successfully CREDITED to your account ending 4821. Thank you for utilizing AuraFarm digital mandi!`
+        `KrishiSetu Bank Alert: ₹${activeBooking.mspDetails?.totalPaymentRs.toLocaleString() || "2,73,000"} has been successfully CREDITED to your account ending 4821. Thank you for utilizing KrishiSetu digital mandi!`
       );
     }, 3000);
   };
@@ -197,7 +200,7 @@ export default function App() {
   // Farmer Grievance Handler
   const handleRaiseGrievance = (text) => {
     pushSmsNotification(
-      `AuraFarm Grievance Desk: Issue ticket #GRV-8821 registered. Assigned to District Agriculture Officer Khanna for rapid resolution.`
+      `KrishiSetu Grievance Desk: Issue ticket #GRV-8821 registered. Assigned to District Agriculture Officer Nashik for rapid resolution.`
     );
   };
 
@@ -221,10 +224,19 @@ export default function App() {
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-center">
         <div className={`w-full transition-all duration-300 ${
-          isMobilePreview ? 'max-w-md bg-white border-[8px] border-slate-900 rounded-[40px] p-4 shadow-2xl my-4 min-h-[750px] relative' : ''
+          isMobilePreview 
+            ? 'max-w-sm sm:max-w-md bg-white border-[10px] border-slate-900 rounded-[44px] p-3 sm:p-4 shadow-2xl my-2 h-[820px] max-h-[85vh] overflow-y-auto overflow-x-hidden relative shadow-emerald-950/20' 
+            : ''
         }`}>
           {isMobilePreview && (
-            <div className="w-32 h-4 bg-slate-900 mx-auto rounded-b-xl mb-4" />
+            <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md pt-1 pb-2 mb-2 flex flex-col items-center border-b border-slate-100">
+              <div className="w-24 h-3.5 bg-slate-900 rounded-full mb-1 flex items-center justify-center">
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-800" />
+              </div>
+              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+                <span>{t.smartphonePreviewMode}</span>
+              </div>
+            </div>
           )}
 
           {/* Show LoginPortal if user is not authenticated */}
@@ -233,6 +245,7 @@ export default function App() {
               onFarmerLogin={handleFarmerLogin}
               onStaffLogin={handleStaffLogin}
               lang={lang}
+              isMobilePreview={isMobilePreview}
             />
           ) : (
             <>
@@ -246,6 +259,7 @@ export default function App() {
                   onRaiseGrievance={handleRaiseGrievance}
                   lang={lang}
                   toggleUssdModal={() => setIsUssdOpen(true)}
+                  isMobilePreview={isMobilePreview}
                 />
               )}
 
@@ -256,11 +270,15 @@ export default function App() {
                   onApproveDbtPayment={handleApproveDbtPayment}
                   onCallNextToken={handleCallNextToken}
                   lang={lang}
+                  isMobilePreview={isMobilePreview}
                 />
               )}
 
               {currentRole === 'analytics' && (
-                <MinistryAnalytics lang={lang} />
+                <MinistryAnalytics 
+                  lang={lang}
+                  isMobilePreview={isMobilePreview} 
+                />
               )}
             </>
           )}
@@ -271,11 +289,11 @@ export default function App() {
       <footer className="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="font-black text-slate-800">AuraFarm MSP Platform</span>
-            <span>• National Mandi Queue & DBT Procurement System</span>
+            <span className="font-black text-slate-800">{t.portalTitle} MSP Platform</span>
+            <span>• {t.portalSubtitle}</span>
           </div>
           <div>
-            100% Light Theme • UIDAI Aadhaar Auth & Staff ID Logins
+            {t.lightThemeSub}
           </div>
         </div>
       </footer>

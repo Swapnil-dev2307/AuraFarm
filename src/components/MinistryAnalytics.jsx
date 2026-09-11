@@ -12,7 +12,7 @@ import {
 import { translations } from '../data/i18n';
 import { districtHeatmapData } from '../data/mockData';
 
-export default function MinistryAnalytics({ lang }) {
+export default function MinistryAnalytics({ lang, isMobilePreview }) {
   const t = translations[lang] || translations.en;
 
   return (
@@ -24,27 +24,27 @@ export default function MinistryAnalytics({ lang }) {
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="bg-emerald-500 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                GOVERNMENT GOVERNANCE
+                {t.ministryGovernanceBadge}
               </span>
-              <span className="text-emerald-300 text-xs font-mono">• Live Harvest Season 2026</span>
+              <span className="text-emerald-300 text-xs font-mono">{t.liveHarvestSeason}</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight mt-1">
-              Statewide Mandi Capacity & Procurement Analytics
+              {t.analyticsHeader}
             </h1>
             <p className="text-slate-300 text-xs sm:text-sm font-medium">
-              Real-time Mandi Footfall, Capacity Load Balancing & Direct Benefit Transfer (DBT) Monitoring
+              {t.analyticsSub}
             </p>
           </div>
 
           <button className="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs px-4 py-3 rounded-2xl flex items-center gap-2 transition shadow-lg shrink-0 cursor-pointer">
             <Download className="w-4 h-4" />
-            <span>Export Ministry Report (PDF/Excel)</span>
+            <span>{t.exportMinistryReport}</span>
           </button>
         </div>
       </div>
 
       {/* Top Metric Cards (4 Cards) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className={`grid grid-cols-1 ${isMobilePreview ? 'grid-cols-1' : 'sm:grid-cols-2 lg:grid-cols-4'} gap-4 sm:gap-5`}>
         {/* Metric 1 */}
         <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xl space-y-2 border-l-8 border-l-emerald-600">
           <div className="flex justify-between items-center text-slate-500 text-xs font-bold">
@@ -111,30 +111,31 @@ export default function MinistryAnalytics({ lang }) {
             </div>
             <div>
               <h2 className="text-lg font-black text-slate-900">
-                District Mandi Congestion & Load Balancer Grid
+                {t.districtHeatmapTitle}
               </h2>
-              <span className="text-xs text-slate-500 font-medium">Real-time capacity utilization across district procurement centers</span>
+              <span className="text-xs text-slate-500 font-medium">{t.districtHeatmapSub}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-3 text-xs font-bold">
             <span className="flex items-center gap-1.5 text-slate-700">
-              <span className="w-3 h-3 rounded-full bg-emerald-500" /> Optimal
+              <span className="w-3 h-3 rounded-full bg-emerald-500" /> {t.optimalTag}
             </span>
             <span className="flex items-center gap-1.5 text-slate-700">
-              <span className="w-3 h-3 rounded-full bg-amber-500" /> Moderate
+              <span className="w-3 h-3 rounded-full bg-amber-500" /> {t.moderateTag}
             </span>
             <span className="flex items-center gap-1.5 text-slate-700">
-              <span className="w-3 h-3 rounded-full bg-red-500" /> Congested
+              <span className="w-3 h-3 rounded-full bg-red-500" /> {t.congestedTag}
             </span>
           </div>
         </div>
 
         {/* Heatmap Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className={`grid grid-cols-1 ${isMobilePreview ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-3'} gap-4 sm:gap-5`}>
           {districtHeatmapData.map((d, idx) => {
             const isHigh = d.status === "Congested" || d.status === "High Demand";
             const isOptimal = d.status === "Optimal" || d.status === "Low Queue";
+            const statusLabel = isHigh ? t.congestedTag : isOptimal ? t.optimalTag : t.moderateTag;
 
             return (
               <div 
@@ -151,13 +152,13 @@ export default function MinistryAnalytics({ lang }) {
                   <span className={`px-2.5 py-0.5 rounded-full text-xs font-black border ${
                     isHigh ? 'bg-amber-100 text-amber-900 border-amber-300' : isOptimal ? 'bg-emerald-100 text-emerald-900 border-emerald-300' : 'bg-sky-100 text-sky-900 border-sky-300'
                   }`}>
-                    {d.status}
+                    {statusLabel}
                   </span>
                 </div>
 
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between font-bold text-slate-700">
-                    <span>Capacity Load:</span>
+                    <span>{t.capacityLabel}</span>
                     <span className="font-black text-slate-900 font-mono">{d.avgCapacity}</span>
                   </div>
                   <div className="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
@@ -170,7 +171,7 @@ export default function MinistryAnalytics({ lang }) {
                   </div>
 
                   <div className="flex justify-between text-slate-600 pt-1 text-xs font-medium">
-                    <span>Avg Wait: <strong className="text-slate-900 font-black">{d.waitTime}</strong></span>
+                    <span>{t.estWaitLabel} <strong className="text-slate-900 font-black">{d.waitTime}</strong></span>
                     <span>Procured: <strong className="text-emerald-800 font-mono font-black">{d.totalProcured}</strong></span>
                   </div>
                 </div>
@@ -189,14 +190,14 @@ export default function MinistryAnalytics({ lang }) {
             </div>
             <div>
               <h2 className="text-lg font-black text-slate-900">
-                Payment Transparency & Delayed Payment Grievance Desk
+                {t.paymentTransparencyTitle}
               </h2>
               <span className="text-xs text-slate-500 font-medium">Auto-escalated grievance monitoring for payment delay &gt; 3 days</span>
             </div>
           </div>
 
           <span className="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-black border border-emerald-200">
-            0.7% AUTO-FLAGGED CASES
+            {t.autoFlaggedCases}
           </span>
         </div>
 
@@ -205,37 +206,37 @@ export default function MinistryAnalytics({ lang }) {
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-slate-100 text-slate-700 font-black uppercase tracking-wider">
-                <th className="p-3.5 rounded-l-xl">Grievance ID</th>
-                <th className="p-3.5">Farmer Name & ID</th>
-                <th className="p-3.5">Mandi Location</th>
-                <th className="p-3.5">MSP Amount</th>
-                <th className="p-3.5">Delay Reason</th>
-                <th className="p-3.5 rounded-r-xl">Escalation Status</th>
+                <th className="p-3.5 rounded-l-xl">{t.grievanceIdCol}</th>
+                <th className="p-3.5">{t.farmerNameIdCol}</th>
+                <th className="p-3.5">{t.mandiLocationCol}</th>
+                <th className="p-3.5">{t.mspAmountCol}</th>
+                <th className="p-3.5">{t.delayReasonCol}</th>
+                <th className="p-3.5 rounded-r-xl">{t.escalationStatusCol}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
               <tr className="hover:bg-slate-50">
                 <td className="p-3.5 font-mono font-black text-amber-700">#GRV-8821</td>
                 <td className="p-3.5">
-                  <div className="font-black text-slate-900">Gurpreet Singh</div>
-                  <div className="text-[10px] text-slate-400 font-mono">PB-FARM-99421</div>
+                  <div className="font-black text-slate-900">Rameshwar Patil</div>
+                  <div className="text-[10px] text-slate-400 font-mono">MH-FARM-99421</div>
                 </td>
-                <td className="p-3.5 font-bold">Khanna Main Mandi</td>
-                <td className="p-3.5 font-mono font-black text-emerald-800">₹2,73,000</td>
+                <td className="p-3.5 font-bold">Nashik APMC Main Mandi</td>
+                <td className="p-3.5 font-mono font-black text-emerald-800">₹5,87,040</td>
                 <td className="p-3.5 text-slate-600 font-medium">Bank IFSC clearance delay</td>
                 <td className="p-3.5">
-                  <span className="bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full font-black text-[11px]">Auto-Escalated to DAO</span>
+                  <span className="bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full font-black text-[11px]">Auto-Escalated to DAO Nashik</span>
                 </td>
               </tr>
               <tr className="hover:bg-slate-50">
                 <td className="p-3.5 font-mono font-black text-emerald-700">#GRV-8794</td>
                 <td className="p-3.5">
-                  <div className="font-black text-slate-900">Ram Kumar Verma</div>
-                  <div className="text-[10px] text-slate-400 font-mono">HR-FARM-11048</div>
+                  <div className="font-black text-slate-900">Ganesh Eknath Shinde</div>
+                  <div className="text-[10px] text-slate-400 font-mono">MH-FARM-11048</div>
                 </td>
-                <td className="p-3.5 font-bold">Karnal Central Mandi</td>
-                <td className="p-3.5 font-mono font-black text-emerald-800">₹1,82,000</td>
-                <td className="p-3.5 text-slate-600 font-medium">Aadhaar name mismatch resolved</td>
+                <td className="p-3.5 font-bold">Latur APMC Mandi</td>
+                <td className="p-3.5 font-mono font-black text-emerald-800">₹3,42,000</td>
+                <td className="p-3.5 text-slate-600 font-medium">7/12 record name mismatch resolved</td>
                 <td className="p-3.5">
                   <span className="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-black text-[11px]">✓ Resolved & Paid</span>
                 </td>

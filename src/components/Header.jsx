@@ -43,7 +43,7 @@ export default function Header({
             className="hover:underline flex items-center gap-1.5 text-amber-300 font-semibold bg-slate-800 px-2 py-0.5 rounded text-[11px] transition"
           >
             <PhoneCall className="w-3 h-3 text-amber-400" />
-            <span>USSD / IVR (*99*456#)</span>
+            <span>{t.ussdIVR}</span>
           </button>
           <span className="hidden md:inline text-slate-600">|</span>
           <span className="hidden sm:inline font-mono text-emerald-300">{t.hotline}</span>
@@ -64,7 +64,7 @@ export default function Header({
                 {t.portalTitle}
               </h1>
               <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-200 uppercase tracking-wider">
-                MSP Procurement
+                {t.mspProcurementBadge}
               </span>
             </div>
             <p className="text-xs text-slate-500 font-medium mt-0.5">
@@ -127,7 +127,7 @@ export default function Header({
             title="Toggle Smartphone Preview Frame for testing Farmer Mobile UX"
           >
             {isMobilePreview ? <Smartphone className="w-4 h-4" /> : <Monitor className="w-4 h-4" />}
-            <span className="hidden sm:inline">{isMobilePreview ? "Mobile Mode" : "Desktop Grid"}</span>
+            <span className="hidden sm:inline">{isMobilePreview ? t.mobileMode : t.desktopGrid}</span>
           </button>
 
           {/* Language Selector */}
@@ -140,7 +140,7 @@ export default function Header({
             >
               <option value="en">English</option>
               <option value="hi">हिन्दी (Hindi)</option>
-              <option value="pb">ਪੰਜਾਬੀ (Punjabi)</option>
+              <option value="mr">मराठी (Marathi)</option>
             </select>
           </div>
 
@@ -150,7 +150,7 @@ export default function Header({
             className="relative flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold px-3 py-1.5 rounded-xl text-xs transition shadow-sm"
           >
             <MessageSquareText className="w-4 h-4 text-emerald-700" />
-            <span className="hidden sm:inline">SMS Logs</span>
+            <span className="hidden sm:inline">{t.smsLogs}</span>
             {smsCount > 0 && (
               <span className="bg-emerald-600 text-white font-mono text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">
                 {smsCount}
@@ -166,7 +166,7 @@ export default function Header({
               title="Log out and return to Login Screen"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Log Out</span>
+              <span className="hidden md:inline">{t.logOut}</span>
             </button>
           )}
         </div>
